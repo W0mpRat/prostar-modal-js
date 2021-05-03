@@ -107,7 +107,11 @@
   /* height: 200px; */
 }
 
-.modal-body {padding: 2px 16px;}
+.modal-body {
+  padding: 2px 16px;
+  overflow: auto;
+  height: 300px;
+}
 
 .modal-body p {
   margin: 0px;
@@ -128,9 +132,27 @@
 }
 
 .modal-footer {
-  padding: 2px 16px;
+  /* padding: 2px 16px; */
   /* background-color: #5cb85c; */
+  text-align: center;
   align-items: center;
   justify-content: center;
+  border-bottom-right-radius: 12px;
+  border-bottom-left-radius: 12px;
+
   /* color: white; */
+}
+
+.modal-footer button {
+  background-color: rgb(231, 102, 102);
+  border: none;
+  width: 260px;
+  color: white;
+  padding: 10px 16px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
 }

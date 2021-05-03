@@ -18,7 +18,6 @@ class Modal extends React.Component {
       .then(res => res.json())
       .then(
         (result) => {
-          console.log(result)
           this.setState({
             isLoaded: true,
             data: result
@@ -48,6 +47,10 @@ class Modal extends React.Component {
     const startDate = new Date(this.state.data.startDate);
     const endDate = new Date(this.state.data.endDate);
     return `${startDate.toLocaleString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })} - ${endDate.toLocaleString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })} PST`
+  }
+
+  getGoogleMapsURL () {
+    return `https://www.google.com/maps/embed/v1/place?key=AIzaSyDpdlk1qckU_znG1ME-yV6tv15wqdZDLEg&q=${this.state.data.location.address.streetAddress.replace(/ /g, '+')}+${this.state.data.location.address.addressLocality.replace(/ /g, '+')}+${this.state.data.location.address.addressRegion}+${this.state.data.location.address.postalCode}`;
   }
 
   render() {
@@ -80,16 +83,27 @@ class Modal extends React.Component {
               </div>
               <div className="body-block">
                 <div className="title">Description</div>
-                <p className={ !this.state.showMore && 'overflow'}>{this.state.data.description}</p>
+                <p className={"" + (this.state.showMore ? '' : 'overflow')}>{this.state.data.description}</p>
                 {/* eslint-disable-next-line */}
-                <a href="javascript:void(0)" onClick={() => this.setState({ showMore: !this.state.showMore })}>Read More</a>
+                <a href="#" onClick={() => this.setState({ showMore: !this.state.showMore })}>
+                  {this.state.showMore ? 'Show Less' : 'Read More'}
+                </a>
               </div>
               <div className="body-block">
                 <div className="title">Location</div>
                 <p>{this.state.data.location.name}</p>
                 <p>{this.state.data.location.address.streetAddress}</p>
                 <p>{this.state.data.location.address.addressLocality}, {this.state.data.location.address.addressRegion} {this.state.data.location.address.postalCode}</p>
+                <iframe
+                  title="map"
+                  width="250"
+                  height="250"
+                  loading="lazy"
+                  src={this.getGoogleMapsURL()}>
+                </iframe>
+                <br></br>
                 <a href={this.getDirectionsURL()}>Get Directions</a>
+
               </div>
             </div>
             <div className="modal-footer">
