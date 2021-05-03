@@ -1,36 +1,107 @@
 import React from 'react';
-import './modal_w3.css';
+import './modal.css';
 
 class Modal extends React.Component {
   constructor (props) {
     super(props)
 
     this.state = {
-      loading: true
-    }
+      error: null,
+      isLoaded: false,
+      showMore: false,
+      data: {}
+    };
   }
+
+  componentDidMount() {
+    fetch("https://www.mocky.io/v2/5d3752f1310000fc74b0788d")
+      .then(res => res.json())
+      .then(
+        (result) => {
+          console.log(result)
+          this.setState({
+            isLoaded: true,
+            data: result
+          });
+        },
+        (error) => {
+          this.setState({
+            isLoaded: true,
+            error
+          });
+        }
+      )
+  }
+
+  getDirectionsURL () {
+    return `https://www.google.com/maps/dir/?api=1&destination=${this.state.data.location.address.streetAddress.replace(/ /g, '+')}+${this.state.data.location.address.addressLocality.replace(/ /g, '+')}+${this.state.data.location.address.addressRegion}+${this.state.data.location.address.postalCode}&travelmode=driving`;
+  }
+
+  getDate1 () {
+    const event = new Date(this.state.data.startDate);
+    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+
+    return event.toLocaleDateString('en-US', options)
+  }
+
+  getTimeRange () {
+    const startDate = new Date(this.state.data.startDate);
+    const endDate = new Date(this.state.data.endDate);
+    return `${startDate.toLocaleString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })} - ${endDate.toLocaleString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })} PST`
+  }
+
   render() {
     return (
-      // <div className="modal" id="modal">
-      //   Hello Modal! {`${this.props.show}`}
-      //   <button onClick={this.props.closeModal}>
-      //     Close
-      //   </button>
-      // </div>
       <div id="myModal" className="modal">
-        <div className="modal-content">
-          <div className="modal-header">
-            <span className="close" onClick={this.props.closeModal}>&times;</span>
-            <h2>Modal Header</h2>
+        {!this.state.isLoaded &&
+          <div className="modal-content loading">
+            Loading...
           </div>
-          <div className="modal-body">
-            <p>Some text in the Modal Body</p>
-            <p>Some other text...</p>
+        }
+        {this.state.isLoaded &&        
+          <div className="modal-content">
+            <div className="modal-header">
+              <div className="image-container">
+                <img className="header-image" src={this.state.data.image} alt="flowers"></img>
+                <div className="bottom-left">
+                  <p>{this.state.data.location.name}, {this.state.data.location.address.addressLocality}</p>
+                  <p className="strong-title">{this.state.data.name}</p>
+                </div>
+                <div className="top-right">
+                  <span className="close" onClick={this.props.closeModal}>&times;</span>
+                </div>
+              </div>
+            </div>
+            <div className="modal-body">
+              <div className="body-block">
+                <div className="title">Date & Time</div>
+                <p>{this.getDate1()}</p>
+                <p>{this.getTimeRange()}</p>
+              </div>
+              <div className="body-block">
+                <div className="title">Description</div>
+                <p className={ !this.state.showMore && 'overflow'}>{this.state.data.description}</p>
+                {/* eslint-disable-next-line */}
+                <a href="javascript:void(0)" onClick={() => this.setState({ showMore: !this.state.showMore })}>Read More</a>
+              </div>
+              <div className="body-block">
+                <div className="title">Location</div>
+                <p>{this.state.data.location.name}</p>
+                <p>{this.state.data.location.address.streetAddress}</p>
+                <p>{this.state.data.location.address.addressLocality}, {this.state.data.location.address.addressRegion} {this.state.data.location.address.postalCode}</p>
+                <a href={this.getDirectionsURL()}>Get Directions</a>
+              </div>
+            </div>
+            <div className="modal-footer">
+              <button onClick={(e) => {
+                e.preventDefault();
+                window.location.href= this.state.data.offers.url;
+              }}>
+                RSVP
+              </button>
+            </div>
           </div>
-          <div className="modal-footer">
-            <h3>Modal Footer</h3>
-          </div>
-        </div>
+        }
       </div>
     )
   }
