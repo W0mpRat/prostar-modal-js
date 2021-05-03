@@ -1,0 +1,15 @@
+.modal {
+  border-radius: 12px;
+  position: absolute; /* Stay in place */
+  left: 50%;
+  margin-left: -150px;
+  z-index: 1; /* Sit on top */
+  /* left: 0; */
+  top: 0;
+  width: 300px; /* Full width */
+  height: 600px; /* Full height */
+  border: 1px solid gray;
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */  
+}
