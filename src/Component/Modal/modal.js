@@ -9,27 +9,23 @@ class Modal extends React.Component {
       error: null,
       isLoaded: false,
       showMore: false,
-      data: {}
+      data: {},
+      mapKey: null
     };
   }
 
-  componentDidMount() {
-    fetch("https://www.mocky.io/v2/5d3752f1310000fc74b0788d")
-      .then(res => res.json())
-      .then(
-        (result) => {
-          this.setState({
-            isLoaded: true,
-            data: result
-          });
-        },
-        (error) => {
-          this.setState({
-            isLoaded: true,
-            error
-          });
-        }
-      )
+  async componentDidMount () {
+    const res = await fetch("https://www.mocky.io/v2/5d3752f1310000fc74b0788d")
+    const result = await res.json();
+    this.setState({
+      data: result
+    });
+    const mapRes = await fetch("https://run.mocky.io/v3/c2cd8b3e-6c77-46de-904d-3401a67c9ed4")
+    const mapResult = await mapRes.json();
+    this.setState({
+      mapKey: mapResult.mapKey,
+      isLoaded: true
+    })
   }
 
   getDirectionsURL () {
@@ -50,18 +46,21 @@ class Modal extends React.Component {
   }
 
   getGoogleMapsURL () {
-    return `https://www.google.com/maps/embed/v1/place?key=AIzaSyDpdlk1qckU_znG1ME-yV6tv15wqdZDLEg&q=${this.state.data.location.address.streetAddress.replace(/ /g, '+')}+${this.state.data.location.address.addressLocality.replace(/ /g, '+')}+${this.state.data.location.address.addressRegion}+${this.state.data.location.address.postalCode}`;
+    return `https://www.google.com/maps/embed/v1/place?key=${this.state.mapKey}&q=${this.state.data.location.address.streetAddress.replace(/ /g, '+')}+${this.state.data.location.address.addressLocality.replace(/ /g, '+')}+${this.state.data.location.address.addressRegion}+${this.state.data.location.address.postalCode}`;
   }
 
   render() {
-    return (
-      <div id="myModal" className="modal">
-        {!this.state.isLoaded &&
+    if (!this.state.isLoaded) {
+      return (
+        <div id="myModal" className="modal">
           <div className="modal-content loading">
             Loading...
           </div>
-        }
-        {this.state.isLoaded &&        
+        </div>
+      )
+    } else {
+      return (
+        <div id="myModal" className="modal">
           <div className="modal-content">
             <div className="modal-header">
               <div className="image-container">
@@ -115,9 +114,9 @@ class Modal extends React.Component {
               </button>
             </div>
           </div>
-        }
-      </div>
-    )
+        </div>
+      )
+    }
   }
 }
 
